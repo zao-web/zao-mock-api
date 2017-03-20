@@ -84,6 +84,25 @@ add_action( 'template_redirect', 'zao_mock_api_response' );
  * @return void
  */
 function zao_mock_api_response_with_meta() {
+	$meta = zao_mock_get_api_meta();
+
+	if ( $meta || is_numeric( $meta ) ) {
+		// You asked for meta, so here you go.
+		wp_send_json_success( $meta );
+	}
+
+	// You asked for meta, but it wasn't found.
+	wp_send_json_error();
+}
+
+/**
+ * Get the queried object's mock_api meta value.
+ *
+ * @since  0.1.0
+ *
+ * @return mixed
+ */
+function zao_mock_get_api_meta() {
 	$meta = false;
 	$object = get_queried_object();
 
@@ -102,11 +121,5 @@ function zao_mock_api_response_with_meta() {
 		$meta = get_term_meta( $object->ID, $meta_key );
 	}
 
-	if ( $meta || is_numeric( $meta ) ) {
-		// You asked for meta, so here you go.
-		wp_send_json_success( $meta );
-	}
-
-	// You asked for meta, but it wasn't found.
-	wp_send_json_error();
+	return $meta;
 }
