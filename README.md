@@ -1,7 +1,8 @@
 Zao Mock API
 --------
 
-Install this WordPress plugin, then create a mock api response by sending query params. Simply make a GET/POST/PUT/ETC request to `<site_url>?mock_api=1`.
+Install this WordPress plugin, then create a mock api response by sending query params. Simply make a GET/POST/PUT/ETC request to `<site_url>?mock_api=1`. This plugin is a great tool to help you mock your HTTP responses to test your REST API.
+Inspired by [Mocky](http://www.mocky.io/).
 
 ## The Basics
 
