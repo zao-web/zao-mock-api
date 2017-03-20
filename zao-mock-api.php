@@ -42,7 +42,7 @@
  */
 function zao_mock_api_response() {
 	// ?mock_api query param required.
-	$can_api = isset( $_GET['mock_api'] ) ? $_GET['mock_api'] : false;
+	$can_api = isset( $_REQUEST['mock_api'] ) ? $_REQUEST['mock_api'] : false;
 
 	if ( ! apply_filters( 'allow_mock_api', $can_api ) ) {
 		return;
@@ -56,14 +56,14 @@ function zao_mock_api_response() {
 	// Ok, let's mock the data instead.
 
 	// code query param optional.. defaults to 200.
-	$code = isset( $_GET['code'] ) && is_numeric( $_GET['code'] )
-		? absint( $_GET['code'] )
+	$code = isset( $_REQUEST['code'] ) && is_numeric( $_REQUEST['code'] )
+		? absint( $_REQUEST['code'] )
 		: 200;
 
 
-	if ( isset( $_GET['response'] ) ) {
+	if ( isset( $_REQUEST['response'] ) ) {
 		// response query param optional..
-		$response = $_GET['response'];
+		$response = $_REQUEST['response'];
 	} else {
 		// defaults to object.
 		$response = array( 'success' => $code < 300, 'data' => 'Hello World' );
