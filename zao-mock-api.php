@@ -24,7 +24,7 @@
 
 /**
  * Sample URL:
- * <site_url>?mock_api=null&code=503&response[boolean]=1&response[string]=Hello World
+ * <site_url>?mock_api=1&code=503&response[boolean]=1&response[string]=Hello World
  *
  * To modify if/when the mock api can be used, use the `allow_mock_api` filter:
  *
@@ -42,22 +42,71 @@
  */
 function zao_mock_api_response() {
 	// ?mock_api query param required.
-	if ( ! isset( $_GET['mock_api'] ) || ! apply_filters( 'allow_mock_api', true ) ) {
+	$can_api = isset( $_GET['mock_api'] ) ? $_GET['mock_api'] : false;
+
+	if ( ! apply_filters( 'allow_mock_api', $can_api ) ) {
 		return;
 	}
+
+	// If checking meta, special handling for meta values here:
+	if ( 'meta' === $can_api ) {
+		return zao_mock_api_response_with_meta();
+	}
+
+	// Ok, let's mock the data instead.
 
 	// code query param optional.. defaults to 200.
 	$code = isset( $_GET['code'] ) && is_numeric( $_GET['code'] )
 		? absint( $_GET['code'] )
 		: 200;
 
-	// response query param optional.. defaults to object.
+
 	if ( isset( $_GET['response'] ) ) {
+		// response query param optional..
 		$response = $_GET['response'];
 	} else {
+		// defaults to object.
 		$response = array( 'success' => $code < 300, 'data' => 'Hello World' );
 	}
 
 	wp_send_json( $response, $code );
 }
 add_action( 'template_redirect', 'zao_mock_api_response' );
+
+/**
+ * Checks for meta for the mock api, and sends JSON response with success param
+ * and possible data param (if data found).
+ *
+ * @since  0.1.0
+ * @uses   wp_send_json_success()
+ * @uses   wp_send_json_error()
+ *
+ * @return void
+ */
+function zao_mock_api_response_with_meta() {
+	$meta = false;
+	$object = get_queried_object();
+
+	/**
+	 * Use this filter to change the meta key mock_api is looking for.
+	 * Use with caution as this will expose data to the public.
+	 *
+	 * @var string $meta_key The meta key mock-api uses to show meta.
+	 */
+	$meta_key = apply_filters( 'mock_api_meta_key', '_mock_api' );
+
+	if ( $object instanceof WP_Post ) {
+		$meta = get_post_meta( $object->ID, $meta_key );
+	}
+	if ( $object instanceof WP_Term ) {
+		$meta = get_term_meta( $object->ID, $meta_key );
+	}
+
+	if ( $meta || is_numeric( $meta ) ) {
+		// You asked for meta, so here you go.
+		wp_send_json_success( $meta );
+	}
+
+	// You asked for meta, but it wasn't found.
+	wp_send_json_error();
+}
