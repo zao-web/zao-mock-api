@@ -26,13 +26,23 @@
  * Sample URL:
  * <site_url>?mock_api=null&code=503&response[boolean]=1&response[string]=Hello World
  *
+ * To modify if/when the mock api can be used, use the `allow_mock_api` filter:
+ *
+ * Examples:
+ * 	// Disable:
+ * 	add_filter( 'allow_mock_api', '__return_false' );
+ *
+ *  	// Allow for logged-in users only:
+ * 	add_filter( 'allow_mock_api', 'is_user_logged_in' );
+ *
+ *
  * @since  0.1.0
  *
  * @return void
  */
 function zao_mock_api_response() {
 	// ?mock_api query param required.
-	if ( ! isset( $_GET['mock_api'] ) ) {
+	if ( ! isset( $_GET['mock_api'] ) || ! apply_filters( 'allow_mock_api', true ) ) {
 		return;
 	}
 

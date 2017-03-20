@@ -15,4 +15,16 @@ Both of those values can be modified with query parameters. For instance, making
 {"boolean": "1", "string": "Hello World"}
 ```
 
-_Probably wise to not install in production._
+If you want to modify if/how the mock api can be used, use the `allow_mock_api` filter.
+
+Examples:
+
+```php
+// Disable:
+add_filter( 'allow_mock_api', '__return_false' );
+
+// Allow for logged-in users only:
+add_filter( 'allow_mock_api', 'is_user_logged_in' );
+```
+
+_Probably wise to not install in production unless modifiying the `allow_mock_api` filter in some way._
