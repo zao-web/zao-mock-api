@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Zao Mock API
- * Plugin URI: http://zao.is
+ * Plugin URI: https://github.com/zao-web/zao-mock-api
  * Description: Create a mock api response by sending query params. Do not use in production. Simply make a GET/POST/PUT/ETC request to <site_url>?mock_api&code=503.
  * Version: 0.1.0
  * Author: Justin Sternberg
